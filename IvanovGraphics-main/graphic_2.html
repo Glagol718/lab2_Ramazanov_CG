@@ -6,7 +6,7 @@
     <title>Lab02</title>
     <style>
         #view {
-            /* border: 1px solid black; */
+            /* border: 1px solid black; */ 
         }
         
         #hist {
@@ -47,6 +47,8 @@
         //avg1 and avg2 difference
         let avg3 = 0;
         let hasImage = false;
+        let avgs1 = [];
+        let avgs2 = [];
         //arrays for histograms
         //массив с данными о количестве пикселей в полутоновом изображении по ntsc
         let hist1_data = [];
@@ -121,7 +123,7 @@
             canvas.height = pic_height;
 
             var chart_ctx = document.getElementById("hist").getContext("2d");
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
             //вывод изображение в канвас с учетом соотношения сторон
             ctx.drawImage(img, 0, 10, pic_width, pic_height)
             ntsc();
@@ -165,6 +167,7 @@
                 data[i + 1] = avg1;
                 data[i + 2] = avg1;
                 hist1_data[Math.round(avg1)] += 1;
+                avgs1.push(avg1);
             }
 
             ctx.putImageData(imgData, pic_width + 10, 10);
@@ -184,16 +187,18 @@
                 data[i + 1] = avg2;
                 data[i + 2] = avg2;
                 hist2_data[Math.round(avg2)] += 1;
+                avgs2.push(avg2);
             }
             ctx.putImageData(imgData, pic_width * 2 + 20, 10);
 
         }
         //копирование данных пикселей с канваса, подсчет разницы между методами hdtv и ntsc, и переписывание данных в канвас
         function diff() {
+            //ctx.clearRect( pic_width * 3 + 30, 10, pic_width, pic_height);
             const imgData = ctx.getImageData(0, 10, pic_width, pic_width / (img.width / img.height));
             var data = imgData.data;
             for (i = 0; i < data.length; i += 4) {
-                avg3 = Math.abs(avg2 - avg1);
+                avg3 = Math.abs(avgs1[i/4]-avgs2[i/4])*10;
                 data[i] = avg3;
                 data[i + 1] = avg3;
                 data[i + 2] = avg3;
